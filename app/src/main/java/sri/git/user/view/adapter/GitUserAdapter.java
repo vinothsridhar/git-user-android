@@ -1,29 +1,21 @@
-package sri.git.user.view;
+package sri.git.user.view.adapter;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
+import android.databinding.ViewDataBinding;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
-import java.util.Collections;
-import java.util.List;
 
 import sri.git.user.R;
 import sri.git.user.databinding.ItemGitUserBinding;
 import sri.git.user.model.GitUser;
+import sri.git.user.viewmodel.BaseItemViewModel;
 import sri.git.user.viewmodel.GitUserItemViewModel;
 
 /**
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserAdapter extends RecyclerView.Adapter<GitUserAdapter.GitUserViewHolder> {
-
-    private List<GitUser> gitUserList;
-
-    public GitUserAdapter() {
-        this.gitUserList = Collections.emptyList();
-    }
+public class GitUserAdapter extends BaseRecyclerViewAdapter<GitUser, GitUserItemViewModel> {
 
     @Override
     public GitUserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,36 +23,19 @@ public class GitUserAdapter extends RecyclerView.Adapter<GitUserAdapter.GitUserV
         return new GitUserViewHolder(itemGitUserBinding);
     }
 
-    @Override
-    public void onBindViewHolder(GitUserViewHolder holder, int position) {
-        holder.bind(gitUserList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return gitUserList.size();
-    }
-
-    public void setGitUserList(List<GitUser> gitUserList) {
-        this.gitUserList = gitUserList;
-        notifyDataSetChanged();
-    }
-
-    static class GitUserViewHolder extends RecyclerView.ViewHolder {
-
-        private ItemGitUserBinding itemGitUserBinding;
+    public static class GitUserViewHolder extends BaseRecyclerViewAdapter.ItemViewHolder {
 
         public GitUserViewHolder(ItemGitUserBinding itemGitUserBinding) {
-            super(itemGitUserBinding.gitUserItem);
-            this.itemGitUserBinding = itemGitUserBinding;
+            super(itemGitUserBinding.gitUserItem, itemGitUserBinding);
         }
 
-        void bind(GitUser user) {
+        @Override
+        public BaseItemViewModel getItemViewModel(ViewDataBinding viewDataBinding) {
+            ItemGitUserBinding itemGitUserBinding = (ItemGitUserBinding) viewDataBinding;
             if (itemGitUserBinding.getGitUserItemViewModel() == null) {
-                itemGitUserBinding.setGitUserItemViewModel(new GitUserItemViewModel(itemView.getContext(), user));
-            } else {
-                itemGitUserBinding.getGitUserItemViewModel().setGitUser(user);
+                itemGitUserBinding.setGitUserItemViewModel(new GitUserItemViewModel(itemView.getContext()));
             }
+            return itemGitUserBinding.getGitUserItemViewModel();
         }
     }
 }

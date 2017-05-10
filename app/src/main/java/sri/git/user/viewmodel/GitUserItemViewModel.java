@@ -1,7 +1,7 @@
 package sri.git.user.viewmodel;
 
 import android.content.Context;
-import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.databinding.BindingAdapter;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,27 +16,23 @@ import sri.git.user.view.GitUserRepoActivity;
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserItemViewModel extends BaseObservable implements BaseViewModel {
+public class GitUserItemViewModel extends BaseItemViewModel<GitUser> {
 
     private static final String TAG = GitUserItemViewModel.class.getSimpleName();
 
     private Context context;
     private GitUser gitUser;
 
-    public GitUserItemViewModel(Context context, GitUser gitUser) {
+    public GitUserItemViewModel(Context context) {
         this.context = context;
-        this.gitUser = gitUser;
     }
 
-    public void setGitUser(GitUser gitUser) {
-        this.gitUser = gitUser;
-        notifyChange();
-    }
-
+    @Bindable
     public String getLogin() {
         return gitUser.getLogin();
     }
 
+    @Bindable
     public String getAvatarUrl() {
         return gitUser.getAvatarUrl();
     }
@@ -51,12 +47,8 @@ public class GitUserItemViewModel extends BaseObservable implements BaseViewMode
     }
 
     @Override
-    public void onCreate() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-
+    public void setItem(GitUser item) {
+        this.gitUser = item;
+        notifyChange();
     }
 }

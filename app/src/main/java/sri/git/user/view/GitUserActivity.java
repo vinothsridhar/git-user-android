@@ -11,6 +11,7 @@ import java.util.Observer;
 import sri.git.user.R;
 import sri.git.user.databinding.ActivityGitUserBinding;
 import sri.git.user.utils.L;
+import sri.git.user.view.adapter.GitUserAdapter;
 import sri.git.user.viewmodel.BaseViewModel;
 import sri.git.user.viewmodel.GitUserViewModel;
 
@@ -36,7 +37,7 @@ public class GitUserActivity extends BaseActivity implements Observer {
             L.d(TAG, "update from observable");
             GitUserAdapter gitUserAdapter = (GitUserAdapter) activityGitUserBinding.gitUserRecyclerView.getAdapter();
             GitUserViewModel gitUserViewModel = (GitUserViewModel) observable;
-            gitUserAdapter.setGitUserList(gitUserViewModel.getGitUserList());
+            gitUserAdapter.refresh(gitUserViewModel.getGitUserList());
         }
     }
 
