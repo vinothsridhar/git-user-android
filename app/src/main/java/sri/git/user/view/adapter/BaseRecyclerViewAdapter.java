@@ -34,7 +34,9 @@ public class BaseRecyclerViewAdapter<T, V extends BaseItemViewModel<T>> extends 
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, int position) {
-        holder.bind(items.get(position));
+        if (items.get(position) != null) {
+            holder.bind(items.get(position));
+        }
     }
 
     @Override

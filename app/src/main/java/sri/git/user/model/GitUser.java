@@ -29,6 +29,9 @@ public class GitUser implements Serializable {
     @SerializedName("repos_url")
     private String repos_url;
 
+    @SerializedName("type")
+    private String type;
+
     public int getId() {
         return id;
     }
@@ -59,6 +62,14 @@ public class GitUser implements Serializable {
 
     public void setReposUrl(String reposUrl) {
         this.repos_url = reposUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

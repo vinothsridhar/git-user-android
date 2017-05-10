@@ -17,6 +17,14 @@ public class GitUserRepoItemViewModel extends BaseItemViewModel<GitRepo> {
         this.context = context;
     }
 
+    public String getName() {
+        return gitRepo.getName();
+    }
+
+    public String getType() {
+        return gitRepo.getOwner().getType();
+    }
+
 
     @Override
     public void setItem(GitRepo item) {

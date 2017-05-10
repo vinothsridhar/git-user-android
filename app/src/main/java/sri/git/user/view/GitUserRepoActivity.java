@@ -4,12 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.Observable;
+import java.util.Observer;
 
 import sri.git.user.R;
 import sri.git.user.databinding.ActivityGitUserRepoBinding;
 import sri.git.user.model.GitUser;
+import sri.git.user.view.adapter.GitUserRepoAdapter;
 import sri.git.user.viewmodel.BaseViewModel;
 import sri.git.user.viewmodel.GitUserRepoViewModel;
 
@@ -17,7 +23,7 @@ import sri.git.user.viewmodel.GitUserRepoViewModel;
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserRepoActivity extends BaseActivity {
+public class GitUserRepoActivity extends BaseActivity implements Observer {
 
     private static final String EXTRA_USER = "EXTRA_USER";
 
@@ -46,9 +52,14 @@ public class GitUserRepoActivity extends BaseActivity {
         this.gitUser = gitUser;
 
         super.onCreate(savedInstance);
+    }
 
+    @Override
+    public void init() {
         setSupportActionBar(activityGitUserRepoBinding.toolbar);
         showBack();
+        setupGitUserRepoList(activityGitUserRepoBinding.gitUserRepoRecyclerView);
+        getGitUserRepoViewModel().addObserver(this);
     }
 
     @Override
@@ -73,6 +84,38 @@ public class GitUserRepoActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        if (observable instanceof GitUserRepoViewModel) {
+            final GitUserRepoAdapter gitUserRepoAdapter = (GitUserRepoAdapter) activityGitUserRepoBinding.gitUserRepoRecyclerView.getAdapter();
+            if (gitUserRepoAdapter.getItemCount() == 0) {
+                gitUserRepoAdapter.refresh(getGitUserRepoViewModel().getGitRepoList());
+            } else {
+                activityGitUserRepoBinding.gitUserRepoRecyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int existingCount = gitUserRepoAdapter.getItemCount();
+                        if (gitUserRepoAdapter.getItemViewType(existingCount - 1) == GitUserRepoAdapter.VIEW_PROGRESS) {
+                            gitUserRepoAdapter.notifyItemRemoved(existingCount - 1);
+                        }
+
+                        gitUserRepoAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+    }
+
+    private void setupGitUserRepoList(RecyclerView recyclerView) {
+        GitUserRepoAdapter gitUserRepoAdapter = new GitUserRepoAdapter();
+        recyclerView.setAdapter(gitUserRepoAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.addOnScrollListener(getGitUserRepoViewModel().gitUserRepoRecyclerViewOnScrollListener);
     }
 
     private GitUserRepoViewModel getGitUserRepoViewModel() {

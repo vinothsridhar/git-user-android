@@ -39,6 +39,9 @@ dependencies {
     compile supportDependencies.recyclerView
     compile supportDependencies.cardView
 
+    compile okhttp
+    compile okhttpLogging
+
     compile retrofitDependencies.retrofit
     compile retrofitDependencies.gson
     compile retrofitDependencies.rxAdapterJava

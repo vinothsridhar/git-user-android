@@ -35,7 +35,7 @@ public class GitApplication extends Application {
 
     public GitUserRestService getRestFactory() {
         if (gitUserRestService == null) {
-            gitUserRestService = RestFactory.create();
+            gitUserRestService = RestFactory.create(getApplicationContext());
         }
 
         return gitUserRestService;
