@@ -18,7 +18,7 @@
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="@dimen/collapsing_bar_height"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -38,7 +38,7 @@
                     android:scaleType="centerCrop"
                     android:fitsSystemWindows="true"
                     app:layout_collapseMode="parallax"
-                    android:tint="#503E50B4"
+                    android:tint="@color/parallax_tint"
                     tools:avatarUrl="@{gitUserRepoModel.avatarUrl}"/>
 
                 <android.support.v7.widget.Toolbar

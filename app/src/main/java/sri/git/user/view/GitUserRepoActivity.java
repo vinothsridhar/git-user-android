@@ -43,6 +43,7 @@ public class GitUserRepoActivity extends BaseActivity implements Observer {
             gitUser = (GitUser) getIntent().getExtras().getSerializable(EXTRA_USER);
         }
 
+        //no need to proceed further if we don't have user object
         if (gitUser == null) {
             Toast.makeText(this, "No user available", Toast.LENGTH_LONG).show();
             finish();
@@ -97,6 +98,7 @@ public class GitUserRepoActivity extends BaseActivity implements Observer {
                     @Override
                     public void run() {
                         int existingCount = gitUserRepoAdapter.getItemCount();
+                        //remove existing progress item from the recyclerview
                         if (gitUserRepoAdapter.getItemViewType(existingCount - 1) == GitUserRepoAdapter.VIEW_PROGRESS) {
                             gitUserRepoAdapter.notifyItemRemoved(existingCount - 1);
                         }

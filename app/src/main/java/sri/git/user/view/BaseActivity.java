@@ -16,6 +16,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected final String TAG = this.getClass().getSimpleName();
 
+    /**
+     * BaseViewModel object
+     * we use this in child activity
+     */
     protected BaseViewModel viewModel;
 
     @Override
@@ -29,6 +33,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         init();
 
+        /**
+         * calling this finally in onCreate so we have all necessary objects be initialized
+         */
         if (viewModel != null) {
             viewModel.onCreate();
         }
@@ -57,6 +64,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         L.d(TAG, "inside onDestroy");
         super.onDestroy();
+
+        //clear viewmodel object
         if (viewModel != null) {
             viewModel.onDestroy();
             viewModel = null;
@@ -81,6 +90,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    /**
+     * Enable actionbar back button
+     */
     protected void showBack() {
         if (getSupportActionBar() == null) {
             L.d(TAG, "support action bar is null");
@@ -93,6 +105,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         actionBar.setDisplayUseLogoEnabled(false);
     }
 
+    /**
+     * create ViewModel from child activity
+     * @return
+     */
     public abstract BaseViewModel createViewModel();
+
+    /**
+     * android data binding with ViewModel
+     */
     public abstract void bindView();
 }

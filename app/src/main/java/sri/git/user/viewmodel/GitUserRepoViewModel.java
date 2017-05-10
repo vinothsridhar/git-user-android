@@ -32,7 +32,7 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
     private static final String TAG = GitUserRepoViewModel.class.getSimpleName();
 
     private static final int SCROLL_THRESHOLD = 5;
-    private static final int PAGE_SIZE = 30;
+    private static final int PAGE_SIZE = 30; //git api default page size
 
     private Context context;
     private GitUser gitUser;
@@ -70,6 +70,9 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
         fetchRepos();
     }
 
+    /**
+     * RecyclerView OnScrollListener
+     */
     public RecyclerView.OnScrollListener gitUserRepoRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -92,6 +95,7 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
     @Override
     public void onCreate() {
         gitApplication = GitApplication.create(context);
+        //fetch right away
         fetchRepos();
     }
 
@@ -107,11 +111,19 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
         return gitRepoList;
     }
 
+    /**
+     * return https://api.github.com/users/mojombo/repos?page={x}
+     * @return reposUrlWithPageNumber
+     */
     private String getReposUrlWithPageNumber() {
         return gitUser.getReposUrl() + "?page=" + pageNumber;
     }
 
+    /**
+     * Fetch git user repos page by page
+     */
     private void fetchRepos() {
+        //
         if (gitUserRepoDisposable != null && !gitUserRepoDisposable.isDisposed()) {
             return;
         }
@@ -123,6 +135,7 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
 
         GitUserRestService gitUserRestService = gitApplication.getRestFactory();
 
+        //load with retry we may face connection issue
         gitUserRepoDisposable = gitUserRestService.fetchRepos(getReposUrlWithPageNumber())
                 .subscribeOn(gitApplication.getScheduler())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -131,15 +144,14 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
                     @Override
                     public void accept(List<GitRepo> gitRepos) throws Exception {
                         if (gitRepos == null) {
-                            gitRepos = new ArrayList<GitRepo>();
+                            gitRepos = new ArrayList<>();
                         }
 
+                        //stop loading more if we get less results than page size
                         if (gitRepos.size() < PAGE_SIZE) {
                             noLoadMore = true;
-                            changeGitUserRepoSet(gitRepos);
-                        } else {
-                            changeGitUserRepoSet(gitRepos);
                         }
+                        changeGitUserRepoSet(gitRepos);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -151,7 +163,12 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
         compositeDisposable.add(gitUserRepoDisposable);
     }
 
+    /**
+     * update recyclerview observer
+     * @param gitRepoList
+     */
     private void changeGitUserRepoSet(List<GitRepo> gitRepoList) {
+        //remove existing null item from the list
         int listCount = this.gitRepoList.size();
         if (listCount > 0 && this.gitRepoList.get(listCount - 1) == null) {
             this.gitRepoList.remove(listCount - 1);

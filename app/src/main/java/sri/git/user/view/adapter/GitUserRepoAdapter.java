@@ -40,6 +40,9 @@ public class GitUserRepoAdapter extends BaseRecyclerViewAdapter<GitRepo, GitUser
         }
     }
 
+    /**
+     * Progress view for the recycler view when we load more items
+     */
     public static class ProgressViewHolder extends BaseRecyclerViewAdapter.ItemViewHolder {
         @Override
         public BaseItemViewModel getItemViewModel(ViewDataBinding viewDataBinding) {

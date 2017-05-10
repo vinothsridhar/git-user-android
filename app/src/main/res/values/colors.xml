@@ -6,4 +6,7 @@
     <color name="colorBackground">#EEEEEE</color>
     <color name="textColorPrimary">#000000</color>
     <color name="textColorSecondary">#999999</color>
+
+    <color name="parallax_tint">#503E50B4</color>
+    <color name="login_color">#50000000</color>
 </resources>

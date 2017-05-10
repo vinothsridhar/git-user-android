@@ -22,6 +22,10 @@ public class BaseRecyclerViewAdapter<T, V extends BaseItemViewModel<T>> extends 
         items = Collections.emptyList();
     }
 
+    /**
+     * refresh adapter this can be used when we load items first time
+     * @param list
+     */
     public void refresh(List<T> list) {
         this.items = list;
         notifyDataSetChanged();
@@ -53,11 +57,20 @@ public class BaseRecyclerViewAdapter<T, V extends BaseItemViewModel<T>> extends 
             this.viewDataBinding = viewDataBinding;
         }
 
+        /**
+         * Bind item with ViewModel
+         * @param item
+         */
         public void bind(T item) {
             VT itemViewModel = getItemViewModel(viewDataBinding);
             itemViewModel.setItem(item);
         }
 
+        /**
+         * Abstract method to get the BaseItemViewModel object
+         * @param viewDataBinding
+         * @return
+         */
         public abstract VT getItemViewModel(ViewDataBinding viewDataBinding);
     }
 
