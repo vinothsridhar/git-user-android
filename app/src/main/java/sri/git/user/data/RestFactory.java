@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestFactory {
 
     public static final String BASE_URL = "https://api.github.com/";
+    public static final String USERS_URL = BASE_URL + "users";
 
     public static GitUserRestService create() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)

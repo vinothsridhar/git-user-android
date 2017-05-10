@@ -10,7 +10,6 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-import sri.git.user.model.GitRepo;
 import sri.git.user.model.GitUser;
 import sri.git.user.utils.L;
 

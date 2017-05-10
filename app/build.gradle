@@ -43,8 +43,13 @@ dependencies {
     compile retrofitDependencies.gson
     compile retrofitDependencies.rxAdapterJava
 
+    compile rxDependencies.rxAndroid
+    compile rxDependencies.rxJava
+
     compile ormliteDependencies.android
     compile ormliteDependencies.core
+
+    compile picasso
 
     testCompile testingDependencies.junit
 }

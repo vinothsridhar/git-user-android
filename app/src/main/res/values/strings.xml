@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">GitUser</string>
+
+    <string name="retry_label">No Internet Connection Available :(</string>
+    <string name="retry_button_text">Retry</string>
 </resources>

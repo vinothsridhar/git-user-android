@@ -8,6 +8,8 @@ ext {
 
     ormliteVersion = '4.48'
 
+    picassoVersion = '2.5.2'
+
     junitVersion = '4.12'
 
     //Packages
@@ -15,6 +17,7 @@ ext {
     retrofitPackage = 'com.squareup.retrofit2'
     reactivePackage = 'io.reactivex.rxjava2'
     ormlitePackage = 'com.j256.ormlite'
+    picassoPackage = 'com.squareup.picasso'
 
     junitPackage = 'junit'
 
@@ -41,7 +44,7 @@ ext {
             core: buildDependency(ormlitePackage, 'ormlite-core', ormliteVersion)
     ]
 
-//    glide = buildDependency(glidePackage, 'glide', glideVersion)
+    picasso = buildDependency(picassoPackage, 'picasso', picassoVersion)
 
     testingDependencies = [
             junit      : buildDependency(junitPackage, 'junit', junitVersion),
