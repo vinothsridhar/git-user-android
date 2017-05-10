@@ -27,7 +27,7 @@ import sri.git.user.utils.L;
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserViewModel extends Observable {
+public class GitUserViewModel extends Observable implements BaseViewModel {
 
     private static final String TAG = GitUserViewModel.class.getSimpleName();
 
@@ -52,25 +52,16 @@ public class GitUserViewModel extends Observable {
         return this.gitUserList;
     }
 
-    /**
-     * Reset this viewmodel
-     */
-    public void reset() {
-        unregisterObservable();
-        compositeDisposable = null;
-        //release db helper
-        if (dbHelper != null) {
-            OpenHelperManager.releaseHelper();
-            dbHelper = null;
-        }
-        context = null;
+    public void onRetryClicked(View v) {
+        showLoadingProgressBar();
+        fetchGitUserList();
     }
 
     /**
      * Get users from the local db
      * if nothing found fetch it from the server then save it to local db
      */
-    public void showGitUsers() {
+    private void showGitUsers() {
         showLoadingProgressBar();
         List<GitUser> gitUserList = Collections.emptyList();
         DbHelper dbHelper = OpenHelperManager.getHelper(context, DbHelper.class);
@@ -89,11 +80,6 @@ public class GitUserViewModel extends Observable {
             L.d(TAG, "local db git users list is empty");
             fetchGitUserList();
         }
-    }
-
-    public void onRetryClicked(View v) {
-        showLoadingProgressBar();
-        fetchGitUserList();
     }
 
     private void showGitUserListRecyclerView() {
@@ -188,4 +174,20 @@ public class GitUserViewModel extends Observable {
         }
     }
 
+    @Override
+    public void onCreate() {
+        showGitUsers();
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterObservable();
+        compositeDisposable = null;
+        //release db helper
+        if (dbHelper != null) {
+            OpenHelperManager.releaseHelper();
+            dbHelper = null;
+        }
+        context = null;
+    }
 }

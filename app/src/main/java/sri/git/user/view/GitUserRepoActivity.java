@@ -10,6 +10,7 @@ import android.widget.Toast;
 import sri.git.user.R;
 import sri.git.user.databinding.ActivityGitUserRepoBinding;
 import sri.git.user.model.GitUser;
+import sri.git.user.viewmodel.BaseViewModel;
 import sri.git.user.viewmodel.GitUserRepoViewModel;
 
 /**
@@ -20,8 +21,8 @@ public class GitUserRepoActivity extends BaseActivity {
 
     private static final String EXTRA_USER = "EXTRA_USER";
 
-    private GitUserRepoViewModel gitUserRepoViewModel;
     private ActivityGitUserRepoBinding activityGitUserRepoBinding;
+    private GitUser gitUser;
 
     public static Intent newIntent(Context context, GitUser gitUser) {
         Intent i = new Intent(context, GitUserRepoActivity.class);
@@ -31,8 +32,6 @@ public class GitUserRepoActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstance) {
-        super.onCreate(savedInstance);
-
         GitUser gitUser = null;
         if (getIntent().hasExtra(EXTRA_USER)) {
             gitUser = (GitUser) getIntent().getExtras().getSerializable(EXTRA_USER);
@@ -44,18 +43,23 @@ public class GitUserRepoActivity extends BaseActivity {
             return;
         }
 
-        init(gitUser);
+        this.gitUser = gitUser;
+
+        super.onCreate(savedInstance);
+
         setSupportActionBar(activityGitUserRepoBinding.toolbar);
         showBack();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (gitUserRepoViewModel != null) {
-            gitUserRepoViewModel.reset();
-            gitUserRepoViewModel = null;
-        }
+    public BaseViewModel createViewModel() {
+        return new GitUserRepoViewModel(this, gitUser);
+    }
+
+    @Override
+    public void bindView() {
+        activityGitUserRepoBinding = DataBindingUtil.setContentView(this, R.layout.activity_git_user_repo);
+        activityGitUserRepoBinding.setGitUserRepoModel(getGitUserRepoViewModel());
     }
 
     @Override
@@ -71,10 +75,7 @@ public class GitUserRepoActivity extends BaseActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
-    private void init(GitUser gitUser) {
-        gitUserRepoViewModel = new GitUserRepoViewModel(this, gitUser);
-        activityGitUserRepoBinding = DataBindingUtil.setContentView(this, R.layout.activity_git_user_repo);
-        activityGitUserRepoBinding.setGitUserRepoModel(gitUserRepoViewModel);
+    private GitUserRepoViewModel getGitUserRepoViewModel() {
+        return (GitUserRepoViewModel) viewModel;
     }
-
 }

@@ -6,19 +6,39 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import sri.git.user.utils.L;
+import sri.git.user.viewmodel.BaseViewModel;
 
 /**
  * Created by sridhar on 10/5/17.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected final String TAG = this.getClass().getSimpleName();
+
+    protected BaseViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         L.d(TAG, "inside onCreate");
         super.onCreate(savedInstanceState);
+
+        viewModel = createViewModel();
+
+        bindView();
+
+        init();
+
+        if (viewModel != null) {
+            viewModel.onCreate();
+        }
+    }
+
+    /**
+     * before call viewmodel if we need some initialization from activity
+     */
+    protected void init() {
+
     }
 
     @Override
@@ -37,6 +57,10 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         L.d(TAG, "inside onDestroy");
         super.onDestroy();
+        if (viewModel != null) {
+            viewModel.onDestroy();
+            viewModel = null;
+        }
     }
 
     @Override
@@ -68,4 +92,7 @@ public class BaseActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayUseLogoEnabled(false);
     }
+
+    public abstract BaseViewModel createViewModel();
+    public abstract void bindView();
 }

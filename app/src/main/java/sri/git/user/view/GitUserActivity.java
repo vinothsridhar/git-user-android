@@ -11,22 +11,23 @@ import java.util.Observer;
 import sri.git.user.R;
 import sri.git.user.databinding.ActivityGitUserBinding;
 import sri.git.user.utils.L;
+import sri.git.user.viewmodel.BaseViewModel;
 import sri.git.user.viewmodel.GitUserViewModel;
 
 public class GitUserActivity extends BaseActivity implements Observer {
 
-    private GitUserViewModel gitUserViewModel;
     private ActivityGitUserBinding activityGitUserBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        init();
+    @Override
+    public void init() {
         setSupportActionBar(activityGitUserBinding.toolbar);
         setupGitUserList(activityGitUserBinding.gitUserRecyclerView);
-        gitUserViewModel.addObserver(this);
-        gitUserViewModel.showGitUsers();
+        getGitUserViewModel().addObserver(this);
     }
 
     @Override
@@ -42,13 +43,21 @@ public class GitUserActivity extends BaseActivity implements Observer {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        gitUserViewModel.reset();
     }
 
-    private void init() {
-        gitUserViewModel = new GitUserViewModel(this);
+    @Override
+    public BaseViewModel createViewModel() {
+        return new GitUserViewModel(this);
+    }
+
+    @Override
+    public void bindView() {
         activityGitUserBinding = DataBindingUtil.setContentView(this, R.layout.activity_git_user);
-        activityGitUserBinding.setGitUserModel(gitUserViewModel);
+        activityGitUserBinding.setGitUserModel(getGitUserViewModel());
+    }
+
+    private GitUserViewModel getGitUserViewModel() {
+        return (GitUserViewModel) viewModel;
     }
 
     private void setupGitUserList(RecyclerView recyclerView) {

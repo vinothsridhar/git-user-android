@@ -16,7 +16,7 @@ import sri.git.user.view.GitUserRepoActivity;
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserItemViewModel extends BaseObservable {
+public class GitUserItemViewModel extends BaseObservable implements BaseViewModel {
 
     private static final String TAG = GitUserItemViewModel.class.getSimpleName();
 
@@ -50,4 +50,13 @@ public class GitUserItemViewModel extends BaseObservable {
         context.startActivity(GitUserRepoActivity.newIntent(context, gitUser));
     }
 
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
 }

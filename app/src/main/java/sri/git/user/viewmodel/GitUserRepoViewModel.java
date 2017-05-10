@@ -21,7 +21,7 @@ import sri.git.user.model.GitUser;
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserRepoViewModel {
+public class GitUserRepoViewModel implements BaseViewModel {
 
     private Context context;
     private GitUser gitUser;
@@ -42,13 +42,6 @@ public class GitUserRepoViewModel {
 
     public String getReposUrl() {
         return gitUser.getReposUrl();
-    }
-
-    public void reset() {
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-            compositeDisposable.dispose();
-            compositeDisposable = null;
-        }
     }
 
     @BindingAdapter("avatarUrl")
@@ -78,4 +71,16 @@ public class GitUserRepoViewModel {
         compositeDisposable.add(disposable);
     }
 
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
+            compositeDisposable.dispose();
+            compositeDisposable = null;
+        }
+    }
 }
