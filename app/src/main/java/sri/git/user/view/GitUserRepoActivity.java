@@ -28,7 +28,7 @@ import sri.git.user.viewmodel.GitUserRepoViewModel;
 
 public class GitUserRepoActivity extends BaseActivity implements Observer {
 
-    private static final String EXTRA_USER = "EXTRA_USER";
+    public static final String EXTRA_USER = "EXTRA_USER";
 
     private ActivityGitUserRepoBinding activityGitUserRepoBinding;
     private GitUser gitUser;

@@ -33,6 +33,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
@@ -42,7 +43,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class GitUserAppTest {
+public class GitUserActivityTest {
 
     private static final int TOTAL_USERS = 30; //this is what we get from https://api.github.com/users
 
@@ -90,7 +91,7 @@ public class GitUserAppTest {
 
         LinearLayout retryLinearLayout = (LinearLayout) gitUserActivityActivityTestRule.getActivity().findViewById(R.id.retryLinearLayout);
 
-        onView(withId(R.id.retryButton)).perform(ViewActions.click());
+        onView(withId(R.id.retryButton)).check(matches(isDisplayed())).perform(ViewActions.click());
 
         IdlingResource visibilityIdlingResource1 = new VisibilityIdlingResource(retryLinearLayout, View.GONE);
         Espresso.registerIdlingResources(visibilityIdlingResource1);
@@ -111,7 +112,7 @@ public class GitUserAppTest {
     }
 
     @Test
-    public void showGitUser() {
+    public void loadGitUserRepo() {
         gitUserActivityActivityTestRule.launchActivity(intent);
         RecyclerView recyclerView = getGitUserRecyclerView();
 
