@@ -16,6 +16,10 @@ ext {
 
     junitVersion = '4.12'
 
+    expressoVersion = '2.2.2'
+
+    runnerVersion = '0.5'
+
     //Packages
     supportPackage = 'com.android.support'
     retrofitPackage = 'com.squareup.retrofit2'
@@ -24,6 +28,7 @@ ext {
     picassoPackage = 'com.squareup.picasso'
     okhttpPackage = 'com.squareup.okhttp3'
     dagger2Package = 'com.google.dagger'
+    expressoPackage = 'com.android.support.test.espresso'
 
     junitPackage = 'junit'
 
@@ -68,6 +73,9 @@ ext {
 
     testingDependencies = [
             junit      : buildDependency(junitPackage, 'junit', junitVersion),
+            expresso   : buildDependency(expressoPackage, 'espresso-core', expressoVersion),
+            expressoContrib: buildDependency(expressoPackage, 'espresso-contrib', expressoVersion),
+            runner     : buildDependency('com.android.support.test', 'runner', runnerVersion),
     ]
 }
 

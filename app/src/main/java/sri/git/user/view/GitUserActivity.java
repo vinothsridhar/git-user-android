@@ -15,6 +15,8 @@ import sri.git.user.viewmodel.GitUserViewModel;
 
 public class GitUserActivity extends BaseActivity {
 
+    public static final String RETRY_MODE_KEY = "RETRY_MODE_KEY";
+
     private ActivityGitUserBinding activityGitUserBinding;
 
     @Override
@@ -31,6 +33,10 @@ public class GitUserActivity extends BaseActivity {
 
         setSupportActionBar(activityGitUserBinding.toolbar);
         setupGitUserList(activityGitUserBinding.gitUserRecyclerView);
+
+        if (getIntent().hasExtra(RETRY_MODE_KEY)) {
+            getGitUserViewModel().retryMode();
+        }
     }
 
     @Override

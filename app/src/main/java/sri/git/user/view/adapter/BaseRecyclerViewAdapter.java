@@ -48,6 +48,10 @@ public class BaseRecyclerViewAdapter<T, V extends BaseItemViewModel<T>> extends 
         return items.size();
     }
 
+    public T getItem(int position) {
+        return items.get(position);
+    }
+
     public abstract static class ItemViewHolder<T, VT extends BaseItemViewModel<T>> extends RecyclerView.ViewHolder {
 
         private final ViewDataBinding viewDataBinding;

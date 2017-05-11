@@ -39,6 +39,9 @@ public class GitUserViewModel implements BaseViewModel {
     private Context context;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    //for testing purpose
+    private boolean retryMode;
+
     @Inject
     GitUserRestService gitUserRestService;
 
@@ -118,7 +121,12 @@ public class GitUserViewModel implements BaseViewModel {
      * @param gitUserList
      */
     private void changeGitUserDataSet(List<GitUser> gitUserList) {
-        gitUserAdapter.refresh(gitUserList);
+        if (retryMode) {
+            showRetry();
+            retryMode = false;
+        } else {
+            gitUserAdapter.refresh(gitUserList);
+        }
     }
 
     /**
@@ -172,6 +180,10 @@ public class GitUserViewModel implements BaseViewModel {
         if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
             compositeDisposable.dispose();
         }
+    }
+
+    public void retryMode() {
+        this.retryMode = true;
     }
 
     @Override
