@@ -17,5 +17,8 @@ Sample project to demonstate MVVM Android Architecture
 # Database
 - ORMLite
 
+# Dependency Injection
+- Dagger (https://google.github.io/dagger)
+
 # Testing
 - Espresso (https://google.github.io/android-testing-support-library/docs/espresso)
