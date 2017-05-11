@@ -7,27 +7,28 @@ import android.view.View;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 
+import javax.inject.Inject;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
-import sri.git.user.GitApplication;
 import sri.git.user.data.DbHelper;
+import sri.git.user.data.Endpoint;
 import sri.git.user.data.GitUserRestService;
-import sri.git.user.data.RestFactory;
 import sri.git.user.model.GitUser;
 import sri.git.user.utils.L;
+import sri.git.user.view.adapter.GitUserAdapter;
 
 /**
  * Created by sridhar on 9/5/17.
  */
 
-public class GitUserViewModel extends Observable implements BaseViewModel {
+public class GitUserViewModel implements BaseViewModel {
 
     private static final String TAG = GitUserViewModel.class.getSimpleName();
 
@@ -36,9 +37,19 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
     public ObservableInt retryLinearLayout;
 
     private Context context;
-    private List<GitUser> gitUserList = new ArrayList<GitUser>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private DbHelper dbHelper;
+
+    @Inject
+    GitUserRestService gitUserRestService;
+
+    @Inject
+    Scheduler scheduler;
+
+    @Inject
+    DbHelper dbHelper;
+
+    @Inject
+    GitUserAdapter gitUserAdapter;
 
     public GitUserViewModel(Context context) {
         this.context = context;
@@ -48,13 +59,13 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
         retryLinearLayout = new ObservableInt(View.GONE);
     }
 
-    public List<GitUser> getGitUserList() {
-        return this.gitUserList;
-    }
-
     public void onRetryClicked(View v) {
         showLoadingProgressBar();
         fetchGitUserList();
+    }
+
+    public GitUserAdapter getGitUserAdapter() {
+        return gitUserAdapter;
     }
 
     /**
@@ -64,7 +75,9 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
     private void showGitUsers() {
         showLoadingProgressBar();
         List<GitUser> gitUserList = Collections.emptyList();
-        DbHelper dbHelper = OpenHelperManager.getHelper(context, DbHelper.class);
+
+        fetchGitUserList();
+
         try {
             L.d(TAG, "getting git users list from local db");
             gitUserList = dbHelper.getGitUserDao().queryForAll();
@@ -101,22 +114,11 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
     }
 
     /**
-     * Notify observers that Git users list has been changed
+     * refresh adapter
      * @param gitUserList
      */
     private void changeGitUserDataSet(List<GitUser> gitUserList) {
-        L.d(TAG, "git users list changed | count: " + gitUserList.size() + " | notifying observers");
-        this.gitUserList.addAll(gitUserList);
-        setChanged();
-        notifyObservers();
-    }
-
-    private DbHelper getDbHelper() {
-        if (dbHelper == null) {
-            dbHelper = OpenHelperManager.getHelper(context, DbHelper.class);
-        }
-
-        return dbHelper;
+        gitUserAdapter.refresh(gitUserList);
     }
 
     /**
@@ -124,11 +126,9 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
      */
     private void fetchGitUserList() {
         L.d(TAG, "fetching git users from the server");
-        GitApplication gitApplication = GitApplication.create(context);
-        GitUserRestService gitUserRestService = gitApplication.getRestFactory();
 
-        Disposable disposable = gitUserRestService.fetchUsers(RestFactory.USERS_URL)
-                .subscribeOn(gitApplication.getScheduler())
+        Disposable disposable = gitUserRestService.fetchUsers(Endpoint.USERS_URL)
+                .subscribeOn(scheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .retry(3)
                 .subscribe(new Consumer<List<GitUser>>() {
@@ -156,7 +156,7 @@ public class GitUserViewModel extends Observable implements BaseViewModel {
         //save this to db
         try {
             for (GitUser gitUser : gitUserList) {
-                getDbHelper().getGitUserDao().create(gitUser);
+                dbHelper.getGitUserDao().create(gitUser);
             }
         } catch (SQLException e) {
             L.logException(TAG, e);

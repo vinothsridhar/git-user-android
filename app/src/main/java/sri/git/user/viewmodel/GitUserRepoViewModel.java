@@ -13,15 +13,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 
+import javax.inject.Inject;
+
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import sri.git.user.GitApplication;
 import sri.git.user.data.GitUserRestService;
 import sri.git.user.model.GitRepo;
 import sri.git.user.model.GitUser;
 import sri.git.user.utils.L;
+import sri.git.user.view.adapter.GitUserRepoAdapter;
 
 /**
  * Created by sridhar on 9/5/17.
@@ -39,9 +42,17 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Disposable gitUserRepoDisposable;
     private int pageNumber = 0;
-    private GitApplication gitApplication;
     private List<GitRepo> gitRepoList;
     private boolean noLoadMore = false;
+
+    @Inject
+    GitUserRestService gitUserRestService;
+
+    @Inject
+    Scheduler scheduler;
+
+    @Inject
+    GitUserRepoAdapter gitUserRepoAdapter;
 
     public GitUserRepoViewModel(Context context, GitUser gitUser) {
         this.context = context;
@@ -94,7 +105,6 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
 
     @Override
     public void onCreate() {
-        gitApplication = GitApplication.create(context);
         //fetch right away
         fetchRepos();
     }
@@ -105,10 +115,15 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
             compositeDisposable.dispose();
             compositeDisposable = null;
         }
+        context = null;
     }
 
     public List<GitRepo> getGitRepoList() {
         return gitRepoList;
+    }
+
+    public GitUserRepoAdapter gitUserRepoAdapter() {
+        return gitUserRepoAdapter;
     }
 
     /**
@@ -133,11 +148,9 @@ public class GitUserRepoViewModel extends Observable implements BaseViewModel {
 
         pageNumber++;
 
-        GitUserRestService gitUserRestService = gitApplication.getRestFactory();
-
         //load with retry we may face connection issue
         gitUserRepoDisposable = gitUserRestService.fetchRepos(getReposUrlWithPageNumber())
-                .subscribeOn(gitApplication.getScheduler())
+                .subscribeOn(scheduler)
                 .observeOn(AndroidSchedulers.mainThread())
                 .retry(2)
                 .subscribe(new Consumer<List<GitRepo>>() {

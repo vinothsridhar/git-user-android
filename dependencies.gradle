@@ -12,6 +12,8 @@ ext {
 
     okhttpVersion = '3.7.0'
 
+    dagger2Version = '2.10'
+
     junitVersion = '4.12'
 
     //Packages
@@ -21,6 +23,7 @@ ext {
     ormlitePackage = 'com.j256.ormlite'
     picassoPackage = 'com.squareup.picasso'
     okhttpPackage = 'com.squareup.okhttp3'
+    dagger2Package = 'com.google.dagger'
 
     junitPackage = 'junit'
 
@@ -29,6 +32,7 @@ ext {
             cardView         : buildDependency(supportPackage, 'cardview-v7', supportVersion),
             appCompat        : buildDependency(supportPackage, 'appcompat-v7', supportVersion),
             design           : buildDependency(supportPackage, 'design', supportVersion),
+            supportAnnotations: buildDependency(supportPackage, 'support-annotations', supportVersion)
     ]
 
     retrofitDependencies = [
@@ -47,9 +51,20 @@ ext {
             core: buildDependency(ormlitePackage, 'ormlite-core', ormliteVersion)
     ]
 
-    picasso = buildDependency(picassoPackage, 'picasso', picassoVersion)
-    okhttp = buildDependency(okhttpPackage, 'okhttp', okhttpVersion)
-    okhttpLogging = buildDependency(okhttpPackage, 'logging-interceptor', okhttpVersion)
+    dagger2Dependencies = [
+            dagger: buildDependency(dagger2Package, 'dagger', dagger2Version),
+            daggerCompiler: buildDependency(dagger2Package, 'dagger-compiler', dagger2Version)
+    ]
+
+    picassoDependencies = [
+            picasso: buildDependency(picassoPackage, 'picasso', picassoVersion),
+            downloader:  buildDependency('com.jakewharton.picasso', 'picasso2-okhttp3-downloader', '1.1.0'),
+    ]
+
+    okhttpDependencies = [
+            okhttp: buildDependency(okhttpPackage, 'okhttp', okhttpVersion),
+            okhttpLogging: buildDependency(okhttpPackage, 'logging-interceptor', okhttpVersion)
+    ]
 
     testingDependencies = [
             junit      : buildDependency(junitPackage, 'junit', junitVersion),

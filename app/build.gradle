@@ -26,6 +26,10 @@ android {
             minifyEnabled false
         }
     }
+
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 dependencies {
@@ -34,13 +38,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    compile supportDependencies.supportAnnotations
     compile supportDependencies.appCompat
     compile supportDependencies.design
     compile supportDependencies.recyclerView
     compile supportDependencies.cardView
 
-    compile okhttp
-    compile okhttpLogging
+    compile okhttpDependencies.okhttp
+    compile okhttpDependencies.okhttpLogging
 
     compile retrofitDependencies.retrofit
     compile retrofitDependencies.gson
@@ -52,7 +57,11 @@ dependencies {
     compile ormliteDependencies.android
     compile ormliteDependencies.core
 
-    compile picasso
+    compile picassoDependencies.picasso
+    compile picassoDependencies.downloader
+
+    compile dagger2Dependencies.dagger
+    annotationProcessor dagger2Dependencies.daggerCompiler
 
     testCompile testingDependencies.junit
 }

@@ -12,7 +12,10 @@ import android.widget.Toast;
 import java.util.Observable;
 import java.util.Observer;
 
+import sri.git.user.GitApplication;
 import sri.git.user.R;
+import sri.git.user.dagger.component.DaggerGitUserRepoActivityComponent;
+import sri.git.user.dagger.component.GitUserRepoActivityComponent;
 import sri.git.user.databinding.ActivityGitUserRepoBinding;
 import sri.git.user.model.GitUser;
 import sri.git.user.view.adapter.GitUserRepoAdapter;
@@ -57,6 +60,11 @@ public class GitUserRepoActivity extends BaseActivity implements Observer {
 
     @Override
     public void init() {
+        GitUserRepoActivityComponent gitUserRepoActivityComponent = DaggerGitUserRepoActivityComponent.builder()
+                .gitAppComponent(GitApplication.create(this).getGitAppComponent())
+                .build();
+        gitUserRepoActivityComponent.inject(getGitUserRepoViewModel());
+
         setSupportActionBar(activityGitUserRepoBinding.toolbar);
         showBack();
         setupGitUserRepoList(activityGitUserRepoBinding.gitUserRepoRecyclerView);
@@ -90,9 +98,11 @@ public class GitUserRepoActivity extends BaseActivity implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         if (observable instanceof GitUserRepoViewModel) {
-            final GitUserRepoAdapter gitUserRepoAdapter = (GitUserRepoAdapter) activityGitUserRepoBinding.gitUserRepoRecyclerView.getAdapter();
+            GitUserRepoViewModel gitUserRepoViewModel = (GitUserRepoViewModel) observable;
+            final GitUserRepoAdapter gitUserRepoAdapter =  gitUserRepoViewModel.gitUserRepoAdapter();
+
             if (gitUserRepoAdapter.getItemCount() == 0) {
-                gitUserRepoAdapter.refresh(getGitUserRepoViewModel().getGitRepoList());
+                gitUserRepoAdapter.refresh(gitUserRepoViewModel.getGitRepoList());
             } else {
                 activityGitUserRepoBinding.gitUserRepoRecyclerView.post(new Runnable() {
                     @Override
@@ -111,8 +121,7 @@ public class GitUserRepoActivity extends BaseActivity implements Observer {
     }
 
     private void setupGitUserRepoList(RecyclerView recyclerView) {
-        GitUserRepoAdapter gitUserRepoAdapter = new GitUserRepoAdapter();
-        recyclerView.setAdapter(gitUserRepoAdapter);
+        recyclerView.setAdapter(getGitUserRepoViewModel().gitUserRepoAdapter());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);

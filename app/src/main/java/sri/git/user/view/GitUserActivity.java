@@ -5,17 +5,15 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.Observable;
-import java.util.Observer;
-
+import sri.git.user.GitApplication;
 import sri.git.user.R;
+import sri.git.user.dagger.component.DaggerGitUserActivityComponent;
+import sri.git.user.dagger.component.GitUserActivityComponent;
 import sri.git.user.databinding.ActivityGitUserBinding;
-import sri.git.user.utils.L;
-import sri.git.user.view.adapter.GitUserAdapter;
 import sri.git.user.viewmodel.BaseViewModel;
 import sri.git.user.viewmodel.GitUserViewModel;
 
-public class GitUserActivity extends BaseActivity implements Observer {
+public class GitUserActivity extends BaseActivity {
 
     private ActivityGitUserBinding activityGitUserBinding;
 
@@ -26,19 +24,13 @@ public class GitUserActivity extends BaseActivity implements Observer {
 
     @Override
     public void init() {
+        GitUserActivityComponent gitUserActivityComponent = DaggerGitUserActivityComponent.builder()
+                .gitAppComponent(GitApplication.create(this).getGitAppComponent())
+                .build();
+        gitUserActivityComponent.inject(getGitUserViewModel());
+
         setSupportActionBar(activityGitUserBinding.toolbar);
         setupGitUserList(activityGitUserBinding.gitUserRecyclerView);
-        getGitUserViewModel().addObserver(this);
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-        if (observable instanceof GitUserViewModel) {
-            L.d(TAG, "update from observable");
-            GitUserAdapter gitUserAdapter = (GitUserAdapter) activityGitUserBinding.gitUserRecyclerView.getAdapter();
-            GitUserViewModel gitUserViewModel = (GitUserViewModel) observable;
-            gitUserAdapter.refresh(gitUserViewModel.getGitUserList());
-        }
     }
 
     @Override
@@ -62,8 +54,7 @@ public class GitUserActivity extends BaseActivity implements Observer {
     }
 
     private void setupGitUserList(RecyclerView recyclerView) {
-        GitUserAdapter gitUserAdapter = new GitUserAdapter();
-        recyclerView.setAdapter(gitUserAdapter);
+        recyclerView.setAdapter(getGitUserViewModel().getGitUserAdapter());
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 }
