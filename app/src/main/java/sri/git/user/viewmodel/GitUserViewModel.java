@@ -121,12 +121,7 @@ public class GitUserViewModel implements BaseViewModel {
      * @param gitUserList
      */
     private void changeGitUserDataSet(List<GitUser> gitUserList) {
-        if (retryMode) {
-            showRetry();
-            retryMode = false;
-        } else {
-            gitUserAdapter.refresh(gitUserList);
-        }
+        gitUserAdapter.refresh(gitUserList);
     }
 
     /**
@@ -188,7 +183,12 @@ public class GitUserViewModel implements BaseViewModel {
 
     @Override
     public void onCreate() {
-        showGitUsers();
+        if (retryMode) {
+            showRetry();
+            retryMode = false;
+        } else {
+            showGitUsers();
+        }
     }
 
     @Override

@@ -40,7 +40,7 @@ public class RecyclerViewItemCountIdlingResource implements IdlingResource {
     }
 
     private boolean isItemLoaded(RecyclerView list) {
-        return list.getAdapter()!=null && list.getAdapter().getItemCount() >= target;
+        return list.getAdapter() != null && list.getAdapter().getItemCount() >= target;
     }
 
 }

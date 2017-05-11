@@ -38,6 +38,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVi
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
+ * Test GitUserActivity functionality
+ *
  * Created by sridhar on 11/5/17.
  */
 
@@ -71,6 +73,9 @@ public class GitUserActivityTest {
         onView(withId(R.id.retryLinearLayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
 
+    /**
+     * Test whether we show progress bar or not on first load
+     */
     @Test
     public void showProgress() {
         gitUserActivityActivityTestRule.launchActivity(intent);
@@ -84,21 +89,37 @@ public class GitUserActivityTest {
         Espresso.unregisterIdlingResources(idlingResource);
     }
 
+    /**
+     * Test retry mode working or not
+     */
     @Test
     public void showRetry() {
         intent.putExtra(GitUserActivity.RETRY_MODE_KEY, true);
         gitUserActivityActivityTestRule.launchActivity(intent);
 
+        onView(withId(R.id.loadingProgressBar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.retryLinearLayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+
         LinearLayout retryLinearLayout = (LinearLayout) gitUserActivityActivityTestRule.getActivity().findViewById(R.id.retryLinearLayout);
 
         onView(withId(R.id.retryButton)).check(matches(isDisplayed())).perform(ViewActions.click());
 
-        IdlingResource visibilityIdlingResource1 = new VisibilityIdlingResource(retryLinearLayout, View.GONE);
-        Espresso.registerIdlingResources(visibilityIdlingResource1);
+        IdlingResource visibilityIdlingResource = new VisibilityIdlingResource(retryLinearLayout, View.GONE);
+        Espresso.registerIdlingResources(visibilityIdlingResource);
         onView(withId(R.id.loadingProgressBar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        Espresso.unregisterIdlingResources(visibilityIdlingResource1);
+        Espresso.unregisterIdlingResources(visibilityIdlingResource);
+
+        RecyclerView recyclerView = getGitUserRecyclerView();
+        IdlingResource idlingResource = new RecyclerViewItemCountIdlingResource(recyclerView, 1);
+        Espresso.registerIdlingResources(visibilityIdlingResource);
+        onView(withId(R.id.gitUserRecyclerView)).perform(scrollToPosition(15));
+        Espresso.unregisterIdlingResources(idlingResource);
+        onView(withId(R.id.gitUserRecyclerView)).check(matches(CustomMatchers.withListItemCount(TOTAL_USERS)));
     }
 
+    /**
+     * Test recycler view data load
+     */
     @Test
     public void loadItems() {
         gitUserActivityActivityTestRule.launchActivity(intent);
@@ -111,6 +132,9 @@ public class GitUserActivityTest {
         onView(withId(R.id.gitUserRecyclerView)).check(matches(CustomMatchers.withListItemCount(TOTAL_USERS)));
     }
 
+    /**
+     * Test GitUserActivity to GitUserRepoActivity
+     */
     @Test
     public void loadGitUserRepo() {
         gitUserActivityActivityTestRule.launchActivity(intent);
@@ -139,6 +163,10 @@ public class GitUserActivityTest {
         Assert.assertEquals(expectedTitle, gitUserRepoActivity.getSupportActionBar().getTitle());
     }
 
+    /**
+     * return gituserRecyclerView Object
+     * @return
+     */
     private RecyclerView getGitUserRecyclerView() {
         return (RecyclerView) gitUserActivityActivityTestRule.getActivity().findViewById(R.id.gitUserRecyclerView);
     }
